@@ -30,10 +30,15 @@ const typeDefs = `
 `;
 
 const resolvers = {
+    //Resolver trivial
+    User: {
+        id: (user /*parent*/) => user.id,
+        name: (user /*parent*/) => user.name,
+        email: (user /*parent*/) => user.email
+    },
     Query: {
         allUsers: () => users
     },
-
     Mutation: {
         createUser: (parent, args, context, info) => {
             const newUser = Object.assign({id: users.length+1}, args);
