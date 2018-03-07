@@ -1,18 +1,19 @@
 {
-  "name": "graphql-blog-api",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "gulp": "node_modules/.bin/gulp"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-clean": "^0.3.2",
-    "gulp-typescript": "^3.2.2",
-    "typescript": "^2.5.3"
-  }
+    "name": "graphql-blog-api",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "dev": "node_modules/.bin/nodemon dist/app",
+        "gulp": "node_modules/.bin/gulp",
+        "start": "concurrently --kill-others \"tsc -w\" \"nodemon dist/app\""
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "concurrently": "^3.5.1",
+        "nodemon": "^1.17.1",
+        "typescript": "^2.5.3"
+    }
 }
