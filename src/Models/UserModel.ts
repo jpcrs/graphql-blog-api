@@ -14,7 +14,7 @@ export interface UserAttributes {
 }
 
 export interface UserInstance extends Sequelize.Instance<UserAttributes>, UserAttributes {
-    isPassword(encodedPassword: string, password: string): boolean;
+    isPasswordValid(encodedPassword: string, password: string): boolean;
 }
 
 export interface UserModel extends BaseModelInterface, Sequelize.Model<UserInstance, UserAttributes> {
@@ -68,7 +68,7 @@ export default (sequelize: Sequelize.Sequelize, DataTypes: Sequelize.DataTypes):
         }
     });
     
-    User.prototype.isPassword = (encodedPassword: string, password: string): boolean => {
+    User.prototype.isPasswordValid = (encodedPassword: string, password: string): boolean => {
         return compareSync(password, encodedPassword);
     }
 
