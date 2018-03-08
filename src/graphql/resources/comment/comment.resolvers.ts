@@ -2,14 +2,15 @@ import { GraphQLResolveInfo } from "graphql";
 import { Dbconnection } from "../../../Interfaces/DbConnectionInterface";
 import { Transaction } from "sequelize";
 import { CommentInstance } from "../../../Models/CommentModel";
+import { handleError } from "../../../utils/utils";
 
 export const commentResolvers = {
     Comment: {
         user: (comment, args, { db }: {db: Dbconnection}, info: GraphQLResolveInfo) => {
-            return db.User.findById(comment.get('user'));
+            return db.User.findById(comment.get('user')).catch(handleError);
         },
         post: (comment, args, { db }: {db: Dbconnection}, info: GraphQLResolveInfo) => {
-            return db.Post.findById(comment.get('post'));
+            return db.Post.findById(comment.get('post')).catch(handleError);;
         }
     },
 
@@ -19,7 +20,7 @@ export const commentResolvers = {
                 where: {post: postId},
                 limit: first,
                 offset
-            })
+            }).catch(handleError);
         }
     },
 
@@ -27,7 +28,7 @@ export const commentResolvers = {
         createComment: (parent, {input}, { db }: {db: Dbconnection}, info: GraphQLResolveInfo) => {
             return db.sequelize.transaction((t: Transaction) => {
                 return db.Comment.create(input, {transaction: t});
-            });
+            }).catch(handleError);
         },
         updateComment: (parent, {id, input}, { db }: {db: Dbconnection}, info: GraphQLResolveInfo) => {
             id = parseInt(id)
@@ -38,7 +39,7 @@ export const commentResolvers = {
                     }
                     return comment.update(input, {transaction: t});
                 })
-            });
+            }).catch(handleError);
         },
         deleteComment: (parent, {id}, { db }: {db: Dbconnection}, info: GraphQLResolveInfo) => {
             id = parseInt(id)
@@ -49,7 +50,7 @@ export const commentResolvers = {
                     }
                     return comment.destroy({transaction: t}).then(comment => !!comment);
                 })
-            });
+            }).catch(handleError);
         },
     }
 }
