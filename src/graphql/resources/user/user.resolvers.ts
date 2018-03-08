@@ -25,11 +25,12 @@ export const userResolvers = {
             }).catch(handleError);
         },
 
-        user: (parent, args, { db }: {db: Dbconnection}, info: GraphQLResolveInfo) => {
-            return db.User.findById(args.id)
+        user: (parent, { id }, { db }: {db: Dbconnection}, info: GraphQLResolveInfo) => {
+            id = parseInt(id);
+            return db.User.findById(id)
             .then((user: UserInstance) => {
                 if(!user) {
-                    throw new Error(`User with id ${args.id} not found!`);
+                    throw new Error(`User with id ${id} not found!`);
                 }
                 return user;
             }).catch(handleError);
