@@ -6,12 +6,10 @@
         "rootDir": "./src",
         "target": "es6",
         "module": "commonjs",
-        "outDir": "./dist"
+        "outDir": "./dist",
+        "allowJs": true
     },
     "compileOnSave": false,
-    // "include": [
-    //     "src/**/*.ts"
-    // ],
     "exclude": [
         "node_modules",
         "dist"
