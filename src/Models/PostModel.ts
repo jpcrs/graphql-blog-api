@@ -1,4 +1,3 @@
-import { UserModel } from "./UserModel";
 import * as Sequelize from "sequelize";
 import { BaseModelInterface } from "../Interfaces/BaseModelInterface";
 import { ModelsInterface } from "../Interfaces/ModelsInterface";

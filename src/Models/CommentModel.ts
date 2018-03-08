@@ -20,7 +20,7 @@ export interface CommentModel extends BaseModelInterface, Sequelize.Model<Commen
 }
 
 export default (sequelize: Sequelize.Sequelize, DataTypes: Sequelize.DataTypes): CommentModel => {
-    const Comment: CommentModel = sequelize.define('Comments', {
+    const Comment: CommentModel = sequelize.define('Comment', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -32,7 +32,7 @@ export default (sequelize: Sequelize.Sequelize, DataTypes: Sequelize.DataTypes):
             allowNull: false
         }
     }, {
-        tableName: 'Comments'
+        tableName: 'comments'
     });
 
     Comment.associate = (models: ModelsInterface): void => {
@@ -51,7 +51,7 @@ export default (sequelize: Sequelize.Sequelize, DataTypes: Sequelize.DataTypes):
                 name: 'post'
             }
         })
-    }
+    };
 
     return Comment;
 }
