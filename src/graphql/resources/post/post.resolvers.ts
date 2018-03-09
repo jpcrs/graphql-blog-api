@@ -3,6 +3,9 @@ import { GraphQLResolveInfo } from "graphql";
 import { PostInstance } from "../../../Models/PostModel";
 import { Transaction } from "sequelize";
 import { handleError } from "../../../utils/utils";
+import { authResolvers } from "../../composable/auth.resolver";
+import { compose } from "../../composable/composable.resolver";
+import { AuthUser } from "../../../Interfaces/AuthUserInterface";
 
 export const postResolvers = {
 
@@ -37,13 +40,14 @@ export const postResolvers = {
     },
 
     Mutation: {
-        createPost: (post, { input }, { db }: {db: Dbconnection}, info: GraphQLResolveInfo) => {
+        createPost: compose(...authResolvers)((post, { input }, { db, authUser }: {db: Dbconnection, authUser: AuthUser}, info: GraphQLResolveInfo) => {
+            input.author = authUser.id;
             return db.sequelize.transaction((t: Transaction) => {
                 return db.Post.create(input, {transaction: t});
             }).catch(handleError);
-        },
+        }),
 
-        updatePost: (post, {id, input}, { db }: {db: Dbconnection}, info: GraphQLResolveInfo) => {
+        updatePost: compose(...authResolvers)((post, {id, input}, { db, authUser }: {db: Dbconnection, authUser: AuthUser}, info: GraphQLResolveInfo) => {
             id = parseInt(id);
             return db.sequelize.transaction((t: Transaction) => {
                 return db.Post.findById(id)
@@ -51,18 +55,28 @@ export const postResolvers = {
                         if(!post) {
                             throw new Error (`Post with id ${id} not found!`);
                         }
+                        if(post.get('author') != authUser.id) {
+                            throw new Error ('Cannot edit posts from another users!')
+                        }
+                        input.author = authUser.id;
                         return post.update(input, {transaction: t});
                     });
             }).catch(handleError);
-        },
+        }),
 
-        deletePost: (post, {id}, { db }: {db: Dbconnection}, info: GraphQLResolveInfo) => {
+        deletePost: compose(...authResolvers)((post, {id}, { db, authUser }: {db: Dbconnection, authUser: AuthUser}, info: GraphQLResolveInfo) => {
             return db.sequelize.transaction((t: Transaction) => {
                 return db.Post.findById(id)
                     .then((post: PostInstance) => {
+                        if(!post) {
+                            throw new Error (`Post with id ${id} not found!`);
+                        }
+                        if(post.get('author') != authUser.id) {
+                            throw new Error ('Cannot delete posts from another users!')
+                        }
                         return post.destroy({transaction: t}).then(post => !!post);
                     });
             }).catch(handleError);
-        }
+        })
     }
 };
