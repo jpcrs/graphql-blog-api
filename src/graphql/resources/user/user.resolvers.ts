@@ -4,6 +4,9 @@ import { UserInstance } from "../../../Models/UserModel";
 import { Transaction } from "sequelize";
 import { userInfo } from "os";
 import { handleError } from "../../../utils/utils";
+import { compose } from "../../composable/composable.resolver";
+import { authResolver } from "../../composable/auth.resolver";
+import { verifyTokenResolver } from "../../composable/verify-troken.resolver";
 
 export const userResolvers = {
 
@@ -25,7 +28,7 @@ export const userResolvers = {
             }).catch(handleError);
         },
 
-        user: (parent, { id }, { db }: {db: Dbconnection}, info: GraphQLResolveInfo) => {
+        user: compose(authResolver, verifyTokenResolver)((parent, { id }, { db }: {db: Dbconnection}, info: GraphQLResolveInfo) => {
             id = parseInt(id);
             return db.User.findById(id)
             .then((user: UserInstance) => {
@@ -34,7 +37,7 @@ export const userResolvers = {
                 }
                 return user;
             }).catch(handleError);
-        }
+        })
     },
 
     Mutation: {
