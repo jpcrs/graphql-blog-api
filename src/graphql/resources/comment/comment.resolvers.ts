@@ -6,14 +6,17 @@ import { handleError } from "../../../utils/utils";
 import { compose } from "../../composable/composable.resolver";
 import { authResolvers } from "../../composable/auth.resolver";
 import { AuthUser } from "../../../Interfaces/AuthUserInterface";
+import { DataLoaders } from "../../../Interfaces/DataLoadersInterface";
 
 export const commentResolvers = {
     Comment: {
-        user: (comment, args, { db }: {db: Dbconnection}, info: GraphQLResolveInfo) => {
-            return db.User.findById(comment.get('user')).catch(handleError);
+        user: (comment, args, { db, dataloaders: { userLoader } }: {db: Dbconnection, dataloaders: DataLoaders}, info: GraphQLResolveInfo) => {
+            // return db.User.findById(comment.get('user')).catch(handleError);
+            return userLoader.load(comment.get('user')).catch(handleError);
         },
-        post: (comment, args, { db }: {db: Dbconnection}, info: GraphQLResolveInfo) => {
-            return db.Post.findById(comment.get('post')).catch(handleError);;
+        post: (comment, args, { db, dataloaders: { postLoader } }: {db: Dbconnection, dataloaders: DataLoaders}, info: GraphQLResolveInfo) => {
+            // return db.Post.findById(comment.get('post')).catch(handleError);
+            return postLoader.load(comment.get('post')).catch(handleError);
         }
     },
 

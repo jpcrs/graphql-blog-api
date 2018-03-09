@@ -11,7 +11,7 @@ let db = null;
 
 if (!db) {
     db = {};
-    const operatorsAlises = false;
+    const operatorsAlises = { $in: Sequelize.Op.in };
 
     let configObject = {...config[env], operatorsAlises};
 
