@@ -11,12 +11,14 @@ import { DataLoaders } from "../../../Interfaces/DataLoadersInterface";
 export const commentResolvers = {
     Comment: {
         user: (comment, args, { db, dataloaders: { userLoader } }: {db: Dbconnection, dataloaders: DataLoaders}, info: GraphQLResolveInfo) => {
-            // return db.User.findById(comment.get('user')).catch(handleError);
-            return userLoader.load(comment.get('user')).catch(handleError);
+            // return db.User.findById(comment.get('user')).catch(handleError); -> without dataloader
+            // return userLoader.load(comment.get('user')).catch(handleError); -> without AST
+            return userLoader.load({key: comment.get('user'), info }).catch(handleError);
         },
         post: (comment, args, { db, dataloaders: { postLoader } }: {db: Dbconnection, dataloaders: DataLoaders}, info: GraphQLResolveInfo) => {
-            // return db.Post.findById(comment.get('post')).catch(handleError);
-            return postLoader.load(comment.get('post')).catch(handleError);
+            // return db.Post.findById(comment.get('post')).catch(handleError); -> without dataloader
+            // return postLoader.load(comment.get('post')).catch(handleError); -> without AST
+            return postLoader.load({key: comment.get('post'), info }).catch(handleError);
         }
     },
 

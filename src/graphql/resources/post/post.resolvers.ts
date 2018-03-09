@@ -1,3 +1,4 @@
+import * as graphqlFields from 'graphql-fields';
 import { Dbconnection } from "../../../Interfaces/DbConnectionInterface";
 import { GraphQLResolveInfo } from "graphql";
 import { PostInstance } from "../../../Models/PostModel";
@@ -12,8 +13,9 @@ export const postResolvers = {
 
     Post: {
         author: (post, args, { db, dataloaders: { userLoader } }: {db: Dbconnection, dataloaders: DataLoaders}, info: GraphQLResolveInfo) => {
-            // return db.User.findById(post.get('author'));
-            return userLoader.load(post.get('author')).catch(handleError);
+            // return db.User.findById(post.get('author')); -> without dataloader
+            // return userLoader.load(post.get('author')).catch(handleError); -> without AST
+            return userLoader.load({key: post.get('author'), info }).catch(handleError);
         },
         comments: (post, { first = 10, offset = 0 }, { db }: {db: Dbconnection}, info: GraphQLResolveInfo) => {
             return db.Comment.findAll({
@@ -26,7 +28,11 @@ export const postResolvers = {
 
     Query: {
         posts: (parent, { first, offset }, { db }: {db: Dbconnection}, info: GraphQLResolveInfo) => {
-            return db.Post.findAll({limit: first, offset: offset});
+            return db.Post.findAll({
+                limit: first,
+                offset: offset,
+                attributes: []
+            });
         },
 
         post: (parent, { id }, { db }: {db: Dbconnection}, info: GraphQLResolveInfo) => {
